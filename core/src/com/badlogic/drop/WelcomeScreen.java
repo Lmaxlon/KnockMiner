@@ -13,6 +13,7 @@ public class WelcomeScreen implements Screen {
     private OrthographicCamera camera;
     private SpriteBatch batch;
     private BitmapFont font;
+    private float timer;
 
     public WelcomeScreen(MainGame game) {
         this.game = game;
@@ -20,6 +21,7 @@ public class WelcomeScreen implements Screen {
         camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         batch = new SpriteBatch();
         font = new BitmapFont();
+        timer = 0;
     }
 
     @Override
@@ -36,6 +38,16 @@ public class WelcomeScreen implements Screen {
         batch.begin();
         font.draw(batch, "Welcome to Your Game", Gdx.graphics.getWidth() / 2 - 50, Gdx.graphics.getHeight());
         batch.end();
+
+        // Increment the timer
+        timer += delta;
+
+        // Check if 5 seconds have passed
+        if (timer >= 5) {
+            // Switch to the next screen (e.g., Drop screen)
+           //dispose();
+            // Dispose of the WelcomeScreen
+        }
     }
 
     @Override

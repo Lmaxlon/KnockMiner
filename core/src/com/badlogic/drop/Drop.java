@@ -10,6 +10,7 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
@@ -28,18 +29,28 @@ public class Drop extends ApplicationAdapter {
 	private Sound dropSound;
 	private Music rainMusic;
 	private SpriteBatch batch;
+
+	private BitmapFont font;
 	private OrthographicCamera camera;
 	private Rectangle bucket;
 	private Array<Rectangle> raindrops;
 	private long lastDropTime;
 
+	private Texture back;
+
+	private Texture score;
+
+	public static final String FONT_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789][_!$%#@|\\/?-+=()*&.;,{}\"´`'<>";
+
 	@Override
 	public void create() {
-		// load the images for the droplet and the bucket, 64x64 pixels each
+		new MainGame();
+		back = new Texture(Gdx.files.internal("back.png"));
+
+		//----
 		dropImage = new Texture(Gdx.files.internal("droplet.png"));
 		bucketImage = new Texture(Gdx.files.internal("bucket.png"));
 
-		// load the drop sound effect and the rain background "music"
 		dropSound = Gdx.audio.newSound(Gdx.files.internal("drop.wav"));
 		rainMusic = Gdx.audio.newMusic(Gdx.files.internal("rain.mp3"));
 
@@ -92,6 +103,8 @@ public class Drop extends ApplicationAdapter {
 		// begin a new batch and draw the bucket and
 		// all drops
 		batch.begin();
+		batch.draw(back, 0, 0, 800, 600);
+	//	font.draw(batch, "Hello World!", 10, 10);
 		batch.draw(bucketImage, bucket.x, bucket.y);
 		for(Rectangle raindrop: raindrops) {
 			batch.draw(dropImage, raindrop.x, raindrop.y);
