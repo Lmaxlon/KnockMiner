@@ -9,7 +9,9 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 
 public class Drop extends ApplicationAdapter {
 	private SpriteBatch batch;
@@ -20,16 +22,14 @@ public class Drop extends ApplicationAdapter {
 	private BitmapFont font;
 	private boolean showWelcomeMessage;
 	private long startTime;
-
 	private float mapX = 0;
 	private float mapY = 0;
-
 	private Texture cellTexture;
 	private Texture rocksTexture;
-	private int mapWidth = 100; // Ширина острова в клетках
-	private int mapHeight = 100; // Высота острова в клетках
+	private int mapWidth = 30; // Ширина острова в клетках
+	private int mapHeight = 30; // Высота острова в клетках
 	private int[][] islandMap; // Карта острова, где каждое значение представляет тип клетки (например, вода, земля и т. д.)
-	private float cellSize = 200; // Размер клетки
+	private float cellSize = 150; // Размер клетки
 	private Vector2 touch1 = new Vector2();
 	private Vector2 touch2 = new Vector2();
 	private float initialDistance;
@@ -156,21 +156,21 @@ public class Drop extends ApplicationAdapter {
 			for (int x = 0; x < mapWidth; x++) {
 				for (int y = 0; y < mapHeight; y++) {
 					float offsetX = (y % 2 == 0) ? 0 : cellSize / 2; // Смещение для каждой второй строки
-					float offsetY = y * cellSize * 0.5f;
+					float offsetY = ((y * cellSize * 0.5f) * 3) / 4;
 					if (islandMap[x][y] == 1) {
-						batch.draw(cellTexture, x * cellSize /*'* 0.75f*/ + offsetX + mapX, offsetY + mapY, cellSize, cellSize);
+						batch.draw(cellTexture, x * cellSize /*'* 0.75f*/ + offsetX + mapX, offsetY + mapY, cellSize, (cellSize * 3) / 4 );
 					}
 					if (islandMap[x][y] == 0) {
-						batch.draw(cellTexture, x * cellSize /*'* 0.75f*/ + offsetX + mapX, offsetY + mapY, cellSize, cellSize);
-						batch.draw(rocksTexture, x * cellSize /*Как'* 0.75f*/ + offsetX + mapX, offsetY + mapY, cellSize, cellSize);
+						batch.draw(cellTexture, x * cellSize /*'* 0.75f*/ + offsetX + mapX, offsetY + mapY, cellSize, (cellSize * 3) / 4);
+						batch.draw(rocksTexture, x * cellSize /*Как'* 0.75f*/ + offsetX + mapX, offsetY + mapY, cellSize,(cellSize * 3 ) / 4);
 					}
 				}
 			}
 			float centerX = 5 * cellSize * 0.75f + ((5 % 2 == 0) ? 0 : cellSize) + mapX;
 			float centerY = cellSize * 0.5f + mapY;;
 			batch.draw(citadel, centerX, centerY, citadel.getWidth() / 3, citadel.getHeight() / 3);
+			batch.setProjectionMatrix(new Matrix4().setToOrtho2D(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight())); // Сброс камеры
 			font.draw(batch, "Pre-alpha version", Gdx.graphics.getWidth() - 400, Gdx.graphics.getHeight() - 50);
-			batch.setProjectionMatrix(camera.combined);
 			batch.end();
 		}
 	}
