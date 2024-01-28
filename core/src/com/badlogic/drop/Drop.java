@@ -39,6 +39,7 @@ this.setScreen(new AuthScreen(this));
 
 	@Override
 	public void dispose() {
+		if (screen != null) screen.hide();
 
 	}
 }
