@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 
 public class Map implements Screen {
     Texture img;
@@ -214,15 +215,22 @@ public class Map implements Screen {
             }
 
             if (Gdx.input.justTouched() && !isWindowOpen) {
-                float touchX = Gdx.input.getX() + mapX;
-                float touchY = Gdx.graphics.getHeight() - Gdx.input.getY() + mapY; // Инвертируем координаты Y, так как libGDX использует обратную систему координат
-                if (touchX >= centerX - cellSize * 3 && touchX <= centerX + cellSize * 3 &&
-                        touchY >= centerY + cellSize * 1 && touchY <= centerY + cellSize * 3) {
+                Vector3 touch = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
+                camera.unproject(touch); // Преобразование экранных координат в мировые
+                float touchX = touch.x;
+                float touchY = touch.y;
+                float buildingX = centerX - cellSize * 3 ; // Позиция X здания на экране
+                float buildingY = centerY + cellSize * 1 ; // Позиция Y здания на экране
+                float buildingWidth = citadel.getWidth(); // Ширина текстуры здания
+                float buildingHeight = citadel.getHeight(); // Высота текстуры здания
+                if (touchX >= buildingX && touchX <= buildingX + buildingWidth &&
+                        touchY >= buildingY && touchY <= buildingY + buildingHeight) {
                     // Открываем окно и устанавливаем флаг isWindowOpen в true
                     emptyWindow.show();
                     isWindowOpen = true;
                 }
             }
+
 
             batch.draw(arrowDown, centerX - cellSize * 0, centerY + cellSize * 7 + arrowOffsetY, citadel.getWidth() / 6, citadel.getHeight() / 6);
             batch.draw(arrowDown1, centerX + cellSize * 15, centerY + cellSize * 21 + arrowOffsetY, citadel.getWidth() / 6, citadel.getHeight() / 6);
