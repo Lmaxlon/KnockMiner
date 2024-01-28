@@ -214,11 +214,12 @@ public class Map implements Screen {
                 arrowSpeed *= -1; // Изменение направления движения при достижении пределов смещения
             }
 
-            if (Gdx.input.justTouched() && !isWindowOpen) {
+            if (Gdx.input.justTouched() && !emptyWindow.isWindowOpen) {
                 Vector3 touch = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
                 camera.unproject(touch); // Преобразование экранных координат в мировые
                 float touchX = touch.x;
                 float touchY = touch.y;
+                //ЭТО КООРДИНАТЫ НИЖНЕЙ ДОБЫВАЛКИ
                 float buildingX = centerX - cellSize * 3 ; // Позиция X здания на экране
                 float buildingY = centerY + cellSize * 1 ; // Позиция Y здания на экране
                 float buildingWidth = citadel.getWidth(); // Ширина текстуры здания
@@ -227,10 +228,14 @@ public class Map implements Screen {
                         touchY >= buildingY && touchY <= buildingY + buildingHeight) {
                     // Открываем окно и устанавливаем флаг isWindowOpen в true
                     emptyWindow.show();
-                    isWindowOpen = true;
                 }
             }
 
+// В вашем методе render() также обновляйте и отрисовывайте emptyWindow, если оно открыто
+            if (emptyWindow.isWindowOpen) {
+                emptyWindow.act(delta);
+                emptyWindow.draw();
+            }
 
             batch.draw(arrowDown, centerX - cellSize * 0, centerY + cellSize * 7 + arrowOffsetY, citadel.getWidth() / 6, citadel.getHeight() / 6);
             batch.draw(arrowDown1, centerX + cellSize * 15, centerY + cellSize * 21 + arrowOffsetY, citadel.getWidth() / 6, citadel.getHeight() / 6);
@@ -239,10 +244,6 @@ public class Map implements Screen {
             batch.setProjectionMatrix(new Matrix4().setToOrtho2D(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight())); // Сброс камеры
             font.draw(batch, "Pre-alpha version", Gdx.graphics.getWidth() - 400, Gdx.graphics.getHeight() - 50);
             batch.end();
-            if (isWindowOpen) {
-                emptyWindow.act(delta);
-                emptyWindow.draw();
-            }
         }
     }
 
