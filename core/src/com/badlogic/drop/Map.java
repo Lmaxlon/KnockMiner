@@ -2,6 +2,7 @@ package com.badlogic.drop;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputAdapter;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -44,7 +45,9 @@ public class Map implements Screen {
     private Vector2 touch2 = new Vector2();
     private float initialDistance;
     private EmptyWindow emptyWindow;
-    private boolean isWindowOpen;
+    private InputProcessor previousInputProcessor;
+    private boolean flag;
+    // private boolean isWindowOpen;
 
     public Map(){
         init();
@@ -79,7 +82,6 @@ public class Map implements Screen {
         showWelcomeMessage = true;
         startTime = System.currentTimeMillis();
         emptyWindow = new EmptyWindow();
-        isWindowOpen = false;
 
         // Инициализация карты острова (здесь просто заполняем всю карту землей)
         islandMap = new int[mapWidth][mapHeight];
@@ -164,6 +166,81 @@ public class Map implements Screen {
             showWelcomeMessage = false;
             batch.setProjectionMatrix(camera.combined); // Установка матрицы проекции камеры для SpriteBatch
             batch.begin();
+
+            // Отрисовка острова из клеток
+            for (int x = 0; x < mapWidth; x++) {
+                for (int y = 0; y < mapHeight; y++) {
+                    float offsetX = (y % 2 == 0) ? 0 : cellSize / 2; // Смещение для каждой второй строки
+                    float offsetY = ((y * cellSize * 0.5f) * 3) / 4;
+                    if (islandMap[x][y] == 1) {
+                        batch.draw(cellTexture, x * cellSize /*'* 0.75f*/ + offsetX + mapX, offsetY + mapY, cellSize, (cellSize * 3) / 4 );
+                    }
+                    if (islandMap[x][y] == 0) {
+                        batch.draw(cellTexture, x * cellSize /*'* 0.75f*/ + offsetX + mapX, offsetY + mapY, cellSize, (cellSize * 3) / 4);
+                        batch.draw(rocksTexture, x * cellSize /*Как'* 0.75f*/ + offsetX + mapX, offsetY + mapY, cellSize,(cellSize * 3 ) / 4);
+                    }
+                }
+            }
+            float centerX = 5 * cellSize * 0.75f + ((5 % 2 == 0) ? 0 : cellSize) + mapX;
+            float centerY = cellSize * 0.5f + mapY;;
+            batch.draw(citadel, centerX + cellSize * 8, centerY + cellSize * 7, citadel.getWidth(), citadel.getHeight());
+            batch.end();
+            batch.begin();
+            if (emptyWindow.great_push == 0){
+                batch.draw(not_opened_miner, centerX - cellSize * 3, centerY + cellSize * 1, citadel.getWidth(), citadel.getHeight());
+            }
+            if (emptyWindow.great_push == 1){
+                batch.draw(opened_miner, centerX - cellSize * 3, centerY + cellSize * 1, citadel.getWidth(), citadel.getHeight());
+            }
+            batch.end();
+            batch.begin();
+           // batch.draw(arrowDown, centerX - cellSize * 0, centerY + cellSize * 7, citadel.getWidth()/6, citadel.getHeight()/6);
+            batch.draw(not_opened_miner1, centerX + cellSize * 12, centerY + cellSize * 15, citadel.getWidth(), citadel.getHeight());
+           // batch.draw(arrowDown1, centerX + cellSize * 15, centerY + cellSize * 21, citadel.getWidth()/6, citadel.getHeight()/6);
+            batch.draw(not_opened_miner2, centerX + cellSize * 1, centerY + cellSize * 12, citadel.getWidth(), citadel.getHeight());
+           // batch.draw(arrowDown2, centerX + cellSize * 4, centerY + cellSize * 18, citadel.getWidth()/6, citadel.getHeight()/6);
+            batch.draw(stock, centerX + cellSize * 15, centerY + cellSize * 9, citadel.getWidth() * 1.25f, citadel.getHeight());
+            arrowOffsetY += arrowSpeed * delta;
+            if (arrowOffsetY > 10 || arrowOffsetY < -10) {
+                arrowSpeed *= -1; // Изменение направления движения при достижении пределов смещения
+            }
+            if (Gdx.input.justTouched() && !emptyWindow.isWindowOpen) {
+                Vector3 touch = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
+                camera.unproject(touch); // Преобразование экранных координат в мировые
+                float touchX = touch.x;
+                float touchY = touch.y;
+                //ЭТО КООРДИНАТЫ НИЖНЕЙ ДОБЫВАЛКИ
+                float buildingX = centerX - cellSize * 3 ; // Позиция X здания на экране
+                float buildingY = centerY + cellSize * 1 ; // Позиция Y здания на экране
+                float buildingWidth = citadel.getWidth(); // Ширина текстуры здания
+                float buildingHeight = citadel.getHeight(); // Высота текстуры здания
+                if (touchX >= buildingX && touchX <= buildingX + buildingWidth &&
+                        touchY >= buildingY && touchY <= buildingY + buildingHeight) {
+                    // Открываем окно и устанавливаем флаг isWindowOpen в true
+                    emptyWindow.show();
+                }
+            }
+
+// В вашем методе render() также обновляйте и отрисовывайте emptyWindow, если оно открыто
+            if (emptyWindow.isWindowOpen) {
+                InputProcessor previousInputProcessor = Gdx.input.getInputProcessor();
+                Gdx.input.setInputProcessor(emptyWindow);
+                emptyWindow.act(delta);
+                emptyWindow.draw();
+                flag = true;
+               // System.out.println("1");
+               // emptyWindow.isWindowOpen = false;
+            }
+           if (!emptyWindow.isWindowOpen && flag){
+               Gdx.input.setInputProcessor(previousInputProcessor); //need to fix
+           }
+            batch.draw(arrowDown, centerX - cellSize * 0, centerY + cellSize * 7 + arrowOffsetY, citadel.getWidth() / 6, citadel.getHeight() / 6);
+            batch.draw(arrowDown1, centerX + cellSize * 15, centerY + cellSize * 21 + arrowOffsetY, citadel.getWidth() / 6, citadel.getHeight() / 6);
+            batch.draw(arrowDown2, centerX + cellSize * 4, centerY + cellSize * 18 + arrowOffsetY, citadel.getWidth() / 6, citadel.getHeight() / 6);
+
+            batch.setProjectionMatrix(new Matrix4().setToOrtho2D(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight())); // Сброс камеры
+            font.draw(batch, "Pre-alpha version", Gdx.graphics.getWidth() - 400, Gdx.graphics.getHeight() - 50);
+
             if (Gdx.input.isTouched(0) && Gdx.input.isTouched(1)) {
                 // Обработка мультитача для масштабирования
                 touch1.set(Gdx.input.getX(0), Gdx.input.getY(0));
@@ -185,64 +262,6 @@ public class Map implements Screen {
             } else {
                 initialDistance = 0;
             }
-            // Отрисовка острова из клеток
-            for (int x = 0; x < mapWidth; x++) {
-                for (int y = 0; y < mapHeight; y++) {
-                    float offsetX = (y % 2 == 0) ? 0 : cellSize / 2; // Смещение для каждой второй строки
-                    float offsetY = ((y * cellSize * 0.5f) * 3) / 4;
-                    if (islandMap[x][y] == 1) {
-                        batch.draw(cellTexture, x * cellSize /*'* 0.75f*/ + offsetX + mapX, offsetY + mapY, cellSize, (cellSize * 3) / 4 );
-                    }
-                    if (islandMap[x][y] == 0) {
-                        batch.draw(cellTexture, x * cellSize /*'* 0.75f*/ + offsetX + mapX, offsetY + mapY, cellSize, (cellSize * 3) / 4);
-                        batch.draw(rocksTexture, x * cellSize /*Как'* 0.75f*/ + offsetX + mapX, offsetY + mapY, cellSize,(cellSize * 3 ) / 4);
-                    }
-                }
-            }
-            float centerX = 5 * cellSize * 0.75f + ((5 % 2 == 0) ? 0 : cellSize) + mapX;
-            float centerY = cellSize * 0.5f + mapY;;
-            batch.draw(citadel, centerX + cellSize * 8, centerY + cellSize * 7, citadel.getWidth(), citadel.getHeight());
-            batch.draw(not_opened_miner, centerX - cellSize * 3, centerY + cellSize * 1, citadel.getWidth(), citadel.getHeight());
-           // batch.draw(arrowDown, centerX - cellSize * 0, centerY + cellSize * 7, citadel.getWidth()/6, citadel.getHeight()/6);
-            batch.draw(not_opened_miner1, centerX + cellSize * 12, centerY + cellSize * 15, citadel.getWidth(), citadel.getHeight());
-           // batch.draw(arrowDown1, centerX + cellSize * 15, centerY + cellSize * 21, citadel.getWidth()/6, citadel.getHeight()/6);
-            batch.draw(not_opened_miner2, centerX + cellSize * 1, centerY + cellSize * 12, citadel.getWidth(), citadel.getHeight());
-           // batch.draw(arrowDown2, centerX + cellSize * 4, centerY + cellSize * 18, citadel.getWidth()/6, citadel.getHeight()/6);
-            batch.draw(stock, centerX + cellSize * 15, centerY + cellSize * 9, citadel.getWidth() * 1.25f, citadel.getHeight());
-            arrowOffsetY += arrowSpeed * delta;
-            if (arrowOffsetY > 10 || arrowOffsetY < -10) {
-                arrowSpeed *= -1; // Изменение направления движения при достижении пределов смещения
-            }
-
-            if (Gdx.input.justTouched() && !emptyWindow.isWindowOpen) {
-                Vector3 touch = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
-                camera.unproject(touch); // Преобразование экранных координат в мировые
-                float touchX = touch.x;
-                float touchY = touch.y;
-                //ЭТО КООРДИНАТЫ НИЖНЕЙ ДОБЫВАЛКИ
-                float buildingX = centerX - cellSize * 3 ; // Позиция X здания на экране
-                float buildingY = centerY + cellSize * 1 ; // Позиция Y здания на экране
-                float buildingWidth = citadel.getWidth(); // Ширина текстуры здания
-                float buildingHeight = citadel.getHeight(); // Высота текстуры здания
-                if (touchX >= buildingX && touchX <= buildingX + buildingWidth &&
-                        touchY >= buildingY && touchY <= buildingY + buildingHeight) {
-                    // Открываем окно и устанавливаем флаг isWindowOpen в true
-                    emptyWindow.show();
-                }
-            }
-
-// В вашем методе render() также обновляйте и отрисовывайте emptyWindow, если оно открыто
-            if (emptyWindow.isWindowOpen) {
-                emptyWindow.act(delta);
-                emptyWindow.draw();
-            }
-
-            batch.draw(arrowDown, centerX - cellSize * 0, centerY + cellSize * 7 + arrowOffsetY, citadel.getWidth() / 6, citadel.getHeight() / 6);
-            batch.draw(arrowDown1, centerX + cellSize * 15, centerY + cellSize * 21 + arrowOffsetY, citadel.getWidth() / 6, citadel.getHeight() / 6);
-            batch.draw(arrowDown2, centerX + cellSize * 4, centerY + cellSize * 18 + arrowOffsetY, citadel.getWidth() / 6, citadel.getHeight() / 6);
-
-            batch.setProjectionMatrix(new Matrix4().setToOrtho2D(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight())); // Сброс камеры
-            font.draw(batch, "Pre-alpha version", Gdx.graphics.getWidth() - 400, Gdx.graphics.getHeight() - 50);
             batch.end();
         }
     }
