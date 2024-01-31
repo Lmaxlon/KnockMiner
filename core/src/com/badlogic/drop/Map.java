@@ -48,8 +48,10 @@ public class Map implements Screen {
     private float initialDistance;
     private EmptyWindow emptyWindow;
     private MiningWindow mining_window;
+    private WarehouseWindow warehouse;
     private boolean flag;
     private boolean flag2;
+    private boolean flag3;
     private MapInputProcessor inputProcessor;
     private int numberBuilding;
     private boolean build_flag1 = false;
@@ -112,6 +114,7 @@ public class Map implements Screen {
         startTime = System.currentTimeMillis();
         emptyWindow = new EmptyWindow();
         mining_window = new MiningWindow();
+        warehouse = new WarehouseWindow(copper_bal, gold_bal, iron_bal);
 
         // Инициализация карты острова (здесь просто заполняем всю карту землей)
         islandMap = new int[mapWidth][mapHeight];
@@ -270,6 +273,14 @@ public class Map implements Screen {
                         mining_window.show();
                     }
                 }
+                buildingX = centerX + cellSize * 15 ;//
+                buildingY = centerY + cellSize * 9 ;//
+                if (touchX >= buildingX && touchX <= buildingX + buildingWidth &&
+                        touchY >= buildingY && touchY <= buildingY + buildingHeight) {
+                    numberBuilding = 4;
+                    warehouse.updateResources(copper_bal, iron_bal, gold_bal);
+                    warehouse.show();
+                }
             }
 
 // В вашем методе render() также обновляйте и отрисовывайте emptyWindow, если оно открыто
@@ -298,6 +309,20 @@ public class Map implements Screen {
             if (!mining_window.isWindowOpen && flag2){
                 Gdx.input.setInputProcessor(inputProcessor);
                 flag2 = false;
+            }
+
+
+            if (warehouse.isWindowOpen) {
+                Gdx.input.setInputProcessor(warehouse);
+                warehouse.act(delta);
+                warehouse.draw();
+                flag3 = true;
+                // System.out.println("1");
+                // emptyWindow.isWindowOpen = false;
+            }
+            if (!warehouse.isWindowOpen && flag3){
+                Gdx.input.setInputProcessor(inputProcessor);
+                flag3 = false;
             }
 
 
