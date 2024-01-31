@@ -17,10 +17,15 @@ public class EmptyWindow extends Stage {
     public int great_push;
     public int cost;
     private Label costLabel;
+    public boolean buildStation = false;
+    private Runnable purchaseCallback;
 
     public EmptyWindow() {
         skin = new Skin(Gdx.files.internal("authPicture/uiskin.json"));
         initialize();
+    }
+    public void setPurchaseCallback(Runnable callback) {
+        this.purchaseCallback = callback;
     }
 
     private void initialize() {
@@ -28,7 +33,7 @@ public class EmptyWindow extends Stage {
         window.setSize(1500, 1000);
         window.setPosition(600, 125);
 
-        Label messageLabel = new Label("Are you really want to buy this building? This building have a cost", skin);
+        Label messageLabel = new Label("Are you really want to buy this building? This building has a cost", skin);
         messageLabel.setFontScale(3);
 
         TextButton closeButton = new TextButton("Close", skin);
@@ -36,6 +41,7 @@ public class EmptyWindow extends Stage {
         closeButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                buildStation = false; // Reset great_push when the window is closed
                 hide(); // Hide the window when the close button is clicked
             }
         });
@@ -49,8 +55,11 @@ public class EmptyWindow extends Stage {
         purchaseButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                great_push = 1;
-                hide();
+                buildStation = true; // Set great_push to 1 when the purchase button is clicked
+                hide(); // Hide the window after the purchase button is clicked
+                if (purchaseCallback != null) {
+                    purchaseCallback.run(); // Invoke the callback
+                }
             }
         });
 

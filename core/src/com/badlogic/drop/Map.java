@@ -178,41 +178,11 @@ public class Map implements Screen {
             float centerX = 5 * cellSize * 0.75f + ((5 % 2 == 0) ? 0 : cellSize) + mapX;
             float centerY = cellSize * 0.5f + mapY;;
             batch.draw(citadel, centerX + cellSize * 8, centerY + cellSize * 7, citadel.getWidth(), citadel.getHeight());
-            batch.end();
-            batch.begin();
-            if (!build_flag1){
-                batch.draw(not_opened_miner, centerX - cellSize * 3, centerY + cellSize * 1, citadel.getWidth(), citadel.getHeight());
-                batch.draw(arrowDown, centerX - cellSize * 0, centerY + cellSize * 7 + arrowOffsetY, citadel.getWidth() / 6, citadel.getHeight() / 6);
-                // batch.draw(arrowDown, centerX - cellSize * 0, centerY + cellSize * 7, citadel.getWidth()/6, citadel.getHeight()/6);
-            }
-            if(!build_flag2){
-                batch.draw(not_opened_miner1, centerX + cellSize * 12, centerY + cellSize * 15, citadel.getWidth(), citadel.getHeight());
-                batch.draw(arrowDown1, centerX + cellSize * 15, centerY + cellSize * 21 + arrowOffsetY, citadel.getWidth() / 6, citadel.getHeight() / 6);
-                // batch.draw(arrowDown1, centerX + cellSize * 15, centerY + cellSize * 21, citadel.getWidth()/6, citadel.getHeight()/6);
-            }
-            if(!build_flag3){
-                batch.draw(not_opened_miner2, centerX + cellSize * 1, centerY + cellSize * 12, citadel.getWidth(), citadel.getHeight());
-                batch.draw(arrowDown2, centerX + cellSize * 4, centerY + cellSize * 18 + arrowOffsetY, citadel.getWidth() / 6, citadel.getHeight() / 6);
-                // batch.draw(arrowDown2, centerX + cellSize * 4, centerY + cellSize * 18, citadel.getWidth()/6, citadel.getHeight()/6);
-            }
-
-            if (emptyWindow.great_push == 1){
-                if (build_flag1){
-                    batch.draw(opened_miner, centerX - cellSize * 3, centerY + cellSize * 1, citadel.getWidth(), (citadel.getWidth() * 5)/4);
-                }
-                if(build_flag2){
-                    batch.draw(opened_miner1, centerX + cellSize * 12, centerY + cellSize * 15, citadel.getWidth(), (citadel.getHeight() * 5)/4);
-                }
-                if(build_flag3){
-                    batch.draw(opened_miner2, centerX + cellSize * 1, centerY + cellSize * 12, citadel.getWidth(), (citadel.getHeight() * 5)/4);
-                }
-            }
-            batch.end();
-            batch.begin();
 
 
             batch.draw(stock, centerX + cellSize * 15, centerY + cellSize * 9, citadel.getWidth() * 1.25f, citadel.getHeight());
-
+            batch.end();
+            batch.begin();
             arrowOffsetY += arrowSpeed * delta;
             if (arrowOffsetY > 10 || arrowOffsetY < -10) {
                 arrowSpeed *= -1; // Изменение направления движения при достижении пределов смещения
@@ -229,28 +199,40 @@ public class Map implements Screen {
                 float buildingHeight = citadel.getHeight(); // Высота текстуры здания
                 if (touchX >= buildingX && touchX <= buildingX + buildingWidth &&
                         touchY >= buildingY && touchY <= buildingY + buildingHeight) {
-                    numberBuilding = 1;
-                    build_flag1 = true;
-                    emptyWindow.set_cost(numberBuilding);
-                    emptyWindow.show();
+                    if (!build_flag1){
+                        numberBuilding = 1;
+                        emptyWindow.set_cost(numberBuilding);
+                        emptyWindow.show();
+                        emptyWindow.setPurchaseCallback(() -> {
+                            build_flag1 = emptyWindow.buildStation;
+                        });
+                    }
                 }
                 buildingX = centerX + cellSize * 12 ;
                 buildingY = centerY + cellSize * 15 ;
                 if (touchX >= buildingX && touchX <= buildingX + buildingWidth &&
                         touchY >= buildingY && touchY <= buildingY + buildingHeight) {
-                    numberBuilding = 2;
-                    build_flag2 = true;
-                    emptyWindow.set_cost(numberBuilding);
-                    emptyWindow.show();
+                    if (!build_flag2){
+                        numberBuilding = 2;
+                        emptyWindow.set_cost(numberBuilding);
+                        emptyWindow.show();
+                        emptyWindow.setPurchaseCallback(() -> {
+                            build_flag2 = emptyWindow.buildStation;
+                        });
+                    }
                 }
                 buildingX = centerX + cellSize * 1 ;
                 buildingY = centerY + cellSize * 12 ;
                 if (touchX >= buildingX && touchX <= buildingX + buildingWidth &&
                         touchY >= buildingY && touchY <= buildingY + buildingHeight) {
-                    numberBuilding = 3;
-                    build_flag3 = true;
-                    emptyWindow.set_cost(numberBuilding);
-                    emptyWindow.show();
+                    if(!build_flag3){
+                        numberBuilding = 3;
+                        emptyWindow.set_cost(numberBuilding);
+                        emptyWindow.show();
+                        emptyWindow.setPurchaseCallback(() -> {
+                            build_flag3 = emptyWindow.buildStation;
+                        });
+                    }
                 }
             }
 
@@ -266,6 +248,38 @@ public class Map implements Screen {
             if (!emptyWindow.isWindowOpen && flag){
                 Gdx.input.setInputProcessor(inputProcessor);
             }
+
+
+
+            if (!build_flag1){
+                batch.draw(not_opened_miner, centerX - cellSize * 3, centerY + cellSize * 1, citadel.getWidth(), citadel.getHeight());
+                batch.draw(arrowDown, centerX - cellSize * 0, centerY + cellSize * 7 + arrowOffsetY, citadel.getWidth() / 6, citadel.getHeight() / 6);
+                // batch.draw(arrowDown, centerX - cellSize * 0, centerY + cellSize * 7, citadel.getWidth()/6, citadel.getHeight()/6);
+            }
+            if(!build_flag2){
+                batch.draw(not_opened_miner1, centerX + cellSize * 12, centerY + cellSize * 15, citadel.getWidth(), citadel.getHeight());
+                batch.draw(arrowDown1, centerX + cellSize * 15, centerY + cellSize * 21 + arrowOffsetY, citadel.getWidth() / 6, citadel.getHeight() / 6);
+                // batch.draw(arrowDown1, centerX + cellSize * 15, centerY + cellSize * 21, citadel.getWidth()/6, citadel.getHeight()/6);
+            }
+            if(!build_flag3){
+                batch.draw(not_opened_miner2, centerX + cellSize * 1, centerY + cellSize * 12, citadel.getWidth(), citadel.getHeight());
+                batch.draw(arrowDown2, centerX + cellSize * 4, centerY + cellSize * 18 + arrowOffsetY, citadel.getWidth() / 6, citadel.getHeight() / 6);
+                // batch.draw(arrowDown2, centerX + cellSize * 4, centerY + cellSize * 18, citadel.getWidth()/6, citadel.getHeight()/6);
+            }
+
+            //  if (emptyWindow.great_push == 1){
+            if (build_flag1){
+                batch.draw(opened_miner, centerX - cellSize * 3, centerY + cellSize * 1, citadel.getWidth(), (citadel.getWidth() * 5)/4);
+            }
+            if(build_flag2){
+                batch.draw(opened_miner1, centerX + cellSize * 12, centerY + cellSize * 15, citadel.getWidth(), (citadel.getHeight() * 5)/4);
+            }
+            if(build_flag3){
+                batch.draw(opened_miner2, centerX + cellSize * 1, centerY + cellSize * 12, citadel.getWidth(), (citadel.getHeight() * 5)/4);
+            }
+            //  }
+            batch.end();
+            batch.begin();
 
             batch.setProjectionMatrix(new Matrix4().setToOrtho2D(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight())); // Сброс камеры
             font.draw(batch, "Pre-alpha version", Gdx.graphics.getWidth() - 400, Gdx.graphics.getHeight() - 50);

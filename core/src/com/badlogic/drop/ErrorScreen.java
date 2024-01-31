@@ -39,7 +39,7 @@ public class ErrorScreen implements Screen {
 
         Gdx.input.setInputProcessor(stage);
         batch = new SpriteBatch();
-        img = new Texture("authPicture/badlogic.jpg");
+        img = new Texture("authPicture/error.png");
         Skin skin =new Skin(Gdx.files.internal("authPicture/uiskin.json"));;
         table = new Table();
 
@@ -59,7 +59,7 @@ public class ErrorScreen implements Screen {
 
 
         table.defaults().width(300);
-        table.add(labelError);
+        table.add(labelError).padTop(800);
         table.row();
         table.add(buttonReturn);
         stage.addActor(table);
@@ -73,9 +73,10 @@ public class ErrorScreen implements Screen {
 
     @Override
     public void render(float delta) {
-        ScreenUtils.clear(1, 0, 0, 1);
+        ScreenUtils.clear(0, 0, 0, 0);
         batch.begin();
-        batch.draw(img, 0, 0);
+        batch.draw(img, 125, 0, Gdx.graphics.getWidth() - 325, Gdx.graphics.getHeight());
+       // batch.draw(img, 0, 0);
         batch.end();
 
         stage.act(delta);

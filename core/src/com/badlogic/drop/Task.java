@@ -52,7 +52,7 @@ public class Task implements Runnable, ApplicationListener {
             JSONObject j = (JSONObject) o;
 
             if (((Long) j.get("request")) == -1) {
-                game.setScreen(new ErrorScreen(game, "bad Auth", authScreen));
+                game.setScreen(new ErrorScreen(game, "", authScreen));
             } else {
                 game.setScreen(new Map());
             }
