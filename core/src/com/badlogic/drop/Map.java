@@ -59,6 +59,16 @@ public class Map implements Screen {
     private long copper_bal = 100;
     private long gold_bal = 150;
     private long iron_bal = 200;
+
+
+    private float timeSinceLastCopperUpdate = 0;
+    private float timeSinceLastIronUpdate = 0;
+    private float timeSinceLastGoldUpdate = 0;
+
+    private final float copperUpdateInterval = 1f / (120f / 60f); // Каждые 2 секунды (30 штук в минуту)
+    private final float ironUpdateInterval = 1f / (60f / 60f); // Каждые 4 секунды (15 штук в минуту)
+    private final float goldUpdateInterval = 1f / (40f / 60f); // Каждые ~8.57 секунд (7 штук в минуту)
+
     // private boolean isWindowOpen;
 
     public Map(){
@@ -289,6 +299,36 @@ public class Map implements Screen {
                 Gdx.input.setInputProcessor(inputProcessor);
                 flag2 = false;
             }
+
+
+
+            if (build_flag1) {
+                timeSinceLastCopperUpdate += delta;
+                if (timeSinceLastCopperUpdate >= copperUpdateInterval) {
+                    copper_bal += 1; // Увеличиваем на 1 каждые 2 секунды
+                    timeSinceLastCopperUpdate -= copperUpdateInterval;
+                }
+            }
+
+            // Обновление ресурса железа (iron)
+            if (build_flag2) {
+                timeSinceLastIronUpdate += delta;
+                if (timeSinceLastIronUpdate >= ironUpdateInterval) {
+                    iron_bal += 1; // Увеличиваем на 1 каждые 4 секунды
+                    timeSinceLastIronUpdate -= ironUpdateInterval;
+                }
+            }
+
+            // Обновление ресурса золота (gold)
+            if (build_flag3) {
+                timeSinceLastGoldUpdate += delta;
+                if (timeSinceLastGoldUpdate >= goldUpdateInterval) {
+                    gold_bal += 1; // Увеличиваем на 1 каждые ~8.57 секунды
+                    timeSinceLastGoldUpdate -= goldUpdateInterval;
+                }
+            }
+
+
 
 
 
