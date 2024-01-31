@@ -19,6 +19,7 @@ public class EmptyWindow extends Stage {
     private Label costLabel;
     public boolean buildStation = false;
     private Runnable purchaseCallback;
+    public long balance;
 
     public EmptyWindow() {
         skin = new Skin(Gdx.files.internal("authPicture/uiskin.json"));
@@ -55,8 +56,14 @@ public class EmptyWindow extends Stage {
         purchaseButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                buildStation = true; // Set great_push to 1 when the purchase button is clicked
-                hide(); // Hide the window after the purchase button is clicked
+                if (balance >= cost){
+                    buildStation = true; // Set great_push to 1 when the purchase button is clicked
+                    balance = balance - cost;
+                    hide(); // Hide the window after the purchase button is clicked
+                } else {
+                    Label messageLabel = new Label("You don't have enough money to buy this!", skin);
+                    messageLabel.setFontScale(3);
+                }
                 if (purchaseCallback != null) {
                     purchaseCallback.run(); // Invoke the callback
                 }
@@ -81,13 +88,13 @@ public class EmptyWindow extends Stage {
 
     public void set_cost(int num) {
         if (num == 1){
-            cost = 10;
+            cost = 10000000;
         }
         if (num == 2){
-            cost = 20;
+            cost = 20000000;
         }
         if (num == 3){
-            cost = 30;
+            cost = 30000000;
         }
         updateCostLabel();
     }
@@ -100,5 +107,9 @@ public class EmptyWindow extends Stage {
     public void hide() {
         isWindowOpen = false;
         window.setVisible(false);
+    }
+
+    public void setBalance(long bal) {
+        balance = bal;
     }
 }

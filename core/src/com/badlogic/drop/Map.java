@@ -55,6 +55,7 @@ public class Map implements Screen {
     private boolean build_flag1 = false;
     private boolean build_flag2 = false;
     private boolean build_flag3 = false;
+    private long balance = 10000000;
     // private boolean isWindowOpen;
 
     public Map(){
@@ -202,9 +203,11 @@ public class Map implements Screen {
                     if (!build_flag1){
                         numberBuilding = 1;
                         emptyWindow.set_cost(numberBuilding);
+                        emptyWindow.setBalance(balance);
                         emptyWindow.show();
                         emptyWindow.setPurchaseCallback(() -> {
                             build_flag1 = emptyWindow.buildStation;
+                            balance = emptyWindow.balance;
                         });
                     }
                 }
@@ -215,9 +218,11 @@ public class Map implements Screen {
                     if (!build_flag2){
                         numberBuilding = 2;
                         emptyWindow.set_cost(numberBuilding);
+                        emptyWindow.setBalance(balance);
                         emptyWindow.show();
                         emptyWindow.setPurchaseCallback(() -> {
                             build_flag2 = emptyWindow.buildStation;
+                            balance = emptyWindow.balance;
                         });
                     }
                 }
@@ -228,9 +233,11 @@ public class Map implements Screen {
                     if(!build_flag3){
                         numberBuilding = 3;
                         emptyWindow.set_cost(numberBuilding);
+                        emptyWindow.setBalance(balance);
                         emptyWindow.show();
                         emptyWindow.setPurchaseCallback(() -> {
                             build_flag3 = emptyWindow.buildStation;
+                            balance = emptyWindow.balance;
                         });
                     }
                 }
@@ -283,7 +290,8 @@ public class Map implements Screen {
 
             batch.setProjectionMatrix(new Matrix4().setToOrtho2D(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight())); // Сброс камеры
             font.draw(batch, "Pre-alpha version", Gdx.graphics.getWidth() - 400, Gdx.graphics.getHeight() - 50);
-            batch.draw(dollars, Gdx.graphics.getWidth() + 400, Gdx.graphics.getHeight() - 50);
+            batch.draw(dollars, 0, 1200, (Gdx.graphics.getWidth() - 2000)/5, (Gdx.graphics.getHeight() - 1700)/5);
+            font.draw(batch, balance + "$", 150, Gdx.graphics.getHeight() - 50);
 
             if (Gdx.input.isTouched(0) && Gdx.input.isTouched(1)) {
                 // Обработка мультитача для масштабирования
