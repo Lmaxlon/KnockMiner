@@ -1,7 +1,6 @@
 package com.badlogic.drop;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -48,14 +47,18 @@ public class Map implements Screen {
     private Vector2 touch2 = new Vector2();
     private float initialDistance;
     private EmptyWindow emptyWindow;
-    private InputProcessor previousInputProcessor;
+    private MiningWindow mining_window;
     private boolean flag;
+    private boolean flag2;
     private MapInputProcessor inputProcessor;
     private int numberBuilding;
     private boolean build_flag1 = false;
     private boolean build_flag2 = false;
     private boolean build_flag3 = false;
-    private long balance = 10000000;
+    private long balance = 60000000;
+    private long copper_bal = 100;
+    private long gold_bal = 150;
+    private long iron_bal = 200;
     // private boolean isWindowOpen;
 
     public Map(){
@@ -98,6 +101,7 @@ public class Map implements Screen {
         showWelcomeMessage = true;
         startTime = System.currentTimeMillis();
         emptyWindow = new EmptyWindow();
+        mining_window = new MiningWindow();
 
         // Инициализация карты острова (здесь просто заполняем всю карту землей)
         islandMap = new int[mapWidth][mapHeight];
@@ -200,8 +204,8 @@ public class Map implements Screen {
                 float buildingHeight = citadel.getHeight(); // Высота текстуры здания
                 if (touchX >= buildingX && touchX <= buildingX + buildingWidth &&
                         touchY >= buildingY && touchY <= buildingY + buildingHeight) {
+                    numberBuilding = 1;
                     if (!build_flag1){
-                        numberBuilding = 1;
                         emptyWindow.set_cost(numberBuilding);
                         emptyWindow.setBalance(balance);
                         emptyWindow.show();
@@ -210,13 +214,18 @@ public class Map implements Screen {
                             balance = emptyWindow.balance;
                         });
                     }
+                    if (build_flag1){
+                        mining_window.updateResourceCount(copper_bal);
+                        mining_window.setBuildingType(numberBuilding);
+                        mining_window.show();
+                    }
                 }
                 buildingX = centerX + cellSize * 12 ;
                 buildingY = centerY + cellSize * 15 ;
                 if (touchX >= buildingX && touchX <= buildingX + buildingWidth &&
                         touchY >= buildingY && touchY <= buildingY + buildingHeight) {
+                    numberBuilding = 2;
                     if (!build_flag2){
-                        numberBuilding = 2;
                         emptyWindow.set_cost(numberBuilding);
                         emptyWindow.setBalance(balance);
                         emptyWindow.show();
@@ -225,13 +234,18 @@ public class Map implements Screen {
                             balance = emptyWindow.balance;
                         });
                     }
+                    if (build_flag2){
+                        mining_window.updateResourceCount(iron_bal);
+                        mining_window.setBuildingType(numberBuilding);
+                        mining_window.show();
+                    }
                 }
                 buildingX = centerX + cellSize * 1 ;
                 buildingY = centerY + cellSize * 12 ;
                 if (touchX >= buildingX && touchX <= buildingX + buildingWidth &&
                         touchY >= buildingY && touchY <= buildingY + buildingHeight) {
+                    numberBuilding = 3;
                     if(!build_flag3){
-                        numberBuilding = 3;
                         emptyWindow.set_cost(numberBuilding);
                         emptyWindow.setBalance(balance);
                         emptyWindow.show();
@@ -239,6 +253,11 @@ public class Map implements Screen {
                             build_flag3 = emptyWindow.buildStation;
                             balance = emptyWindow.balance;
                         });
+                    }
+                    if (build_flag3){
+                        mining_window.updateResourceCount(gold_bal);
+                        mining_window.setBuildingType(numberBuilding);
+                        mining_window.show();
                     }
                 }
             }
@@ -254,6 +273,21 @@ public class Map implements Screen {
             }
             if (!emptyWindow.isWindowOpen && flag){
                 Gdx.input.setInputProcessor(inputProcessor);
+                flag = false;
+            }
+
+
+            if (mining_window.isWindowOpen) {
+                Gdx.input.setInputProcessor(mining_window);
+                mining_window.act(delta);
+                mining_window.draw();
+                flag2 = true;
+                // System.out.println("1");
+                // emptyWindow.isWindowOpen = false;
+            }
+            if (!mining_window.isWindowOpen && flag2){
+                Gdx.input.setInputProcessor(inputProcessor);
+                flag2 = false;
             }
 
 
@@ -357,7 +391,7 @@ public class Map implements Screen {
         arrowDown.dispose();
         arrowDown1.dispose();
         arrowDown2.dispose();
-        copper.dispose();
+       // copper.dispose();
         dollars.dispose();
         gold.dispose();
         iron.dispose();
