@@ -1,9 +1,11 @@
 package com.badlogic.drop;
 
+import com.badlogic.gdx.Application;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputAdapter;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -26,7 +28,14 @@ public class Drop extends Game {
 
 	@Override
 	public void create() {
-this.setScreen(new AuthScreen(this));
+		Gdx.app.setLogLevel(Application.LOG_DEBUG);
+
+		FileHandle file= Gdx.files.local("jwtDir/jwtToken.text");
+		Gdx.app.postRunnable(new TaskToken(file.readString(),"tokenAuth",this));
+		Gdx.app.debug("rap", file.readString());
+
+
+		//this.setScreen(new AuthScreen(this));
 	}
 
 

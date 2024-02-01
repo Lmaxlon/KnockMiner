@@ -3,22 +3,31 @@ package com.badlogic.drop;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Scanner;
+
 public class Task implements Runnable, ApplicationListener {
+
     ErrorScreen error;
     String login;
     String password;
     Game game;
     AuthScreen authScreen;
     String res;
+    String context;
 
-    Task(String login, String password, Game game,AuthScreen authScreen) {
+    Task(String login, String password, String context, Game game,AuthScreen authScreen) {
         this.login = login;
         this.password = password;
+        this.context=context;
         this.game=game;
         this.authScreen=authScreen;
     }
@@ -29,7 +38,7 @@ public class Task implements Runnable, ApplicationListener {
         //new HttpClient().connectToServer(login, password);
         String response = null;
         try {
-            response = new HttpClient().connectToServer(login, password);
+            response = new HttpClient().connectToServer(login, password,context);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -54,6 +63,9 @@ public class Task implements Runnable, ApplicationListener {
             if (((Long) j.get("request")) == -1) {
                 game.setScreen(new ErrorScreen(game, "", authScreen));
             } else {
+                FileHandle file= Gdx.files.local("jwtDir/jwtToken.text");
+                file.writeString((String)j.get("token"),false);
+
                 game.setScreen(new Map());
             }
         } catch (ParseException e) {

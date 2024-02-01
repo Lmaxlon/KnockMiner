@@ -9,11 +9,13 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
@@ -48,20 +50,19 @@ public class ErrorScreen implements Screen {
         font = labelError.getStyle().font; // получение шрифта TextField
         font.getData().setScale(3);
         TextButton buttonReturn = new TextButton("Return", skin);
-        buttonReturn.addListener(new EventListener() {
+        buttonReturn.addListener(new ClickListener() {
             @Override
-            public boolean handle(Event event) {
+            public void clicked(InputEvent event, float x, float y) {
                 game.setScreen(new AuthScreen(game));
                 dispose();
-                return false;
             }
         });
 
 
         table.defaults().width(300);
-        table.add(labelError).padTop(800);
+        table.add(labelError);
         table.row();
-        table.add(buttonReturn);
+        table.add(buttonReturn);;
         stage.addActor(table);
     }
 

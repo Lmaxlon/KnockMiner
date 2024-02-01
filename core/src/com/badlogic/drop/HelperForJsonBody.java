@@ -10,12 +10,13 @@ public class HelperForJsonBody {
         this.object=object;
 
     }
-    public HelperForJsonBody(InputStream inputStream){
-
-    }
     public JSONObject FormAuth(String login, String password){
         object.put("login",login);
         object.put("password",password);
+        return object;
+    }
+    public JSONObject FormAuthToken(String token){
+        object.put("token",token);
         return object;
     }
 

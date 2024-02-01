@@ -12,7 +12,7 @@ import java.util.concurrent.CountDownLatch;
 
 public class HttpClient {
 
-    public String connectToServer(String login, String password) throws InterruptedException {
+    public String connectToServer(String login, String password, String context) throws InterruptedException {
         String[] response = {""};
         CountDownLatch latch = new CountDownLatch(1);
         int[] attemptCounter = {0};
@@ -21,7 +21,68 @@ public class HttpClient {
         HelperForJsonBody body = new HelperForJsonBody(new JSONObject());
         String jsonStr = body.FormAuth(login, password).toJSONString();
         Net.HttpRequest httpRequest = builder.newRequest().method(Net.HttpMethods.POST)
-                .url("https://e609-2a00-1370-81a6-f294-15eb-9076-8a09-dc20.ngrok-free.app/api")
+                .url("https://9ad6-5-228-80-154.ngrok-free.app/"+context)
+                .content(jsonStr)
+                .header("Content-Type", "application/json")
+                .build();
+
+        Gdx.net.sendHttpRequest(httpRequest, new Net.HttpResponseListener() {
+            @Override
+            public void handleHttpResponse(Net.HttpResponse httpResponse) {
+                HttpStatus status = httpResponse.getStatus();
+                if (status.getStatusCode() == HttpStatus.SC_OK) {
+                    response[0] = httpResponse.getResultAsString();
+                    Gdx.app.debug("tag", "response server123" + response[0] + "03");
+                } else {
+                    response[0] = httpResponse.getResultAsString();
+                    Gdx.app.debug("tag", "response server1" + status.getStatusCode());
+                    attemptCounter[0]++;
+                    if (attemptCounter[0] >= 3) {
+                        Gdx.app.postRunnable(new Runnable() {
+                            @Override
+                            public void run() {
+                                Gdx.app.debug("tag", "Too many attempts, exiting game");
+                                Timer.schedule(new Timer.Task() {
+                                    @Override
+                                    public void run() {
+                                        Gdx.app.exit();
+                                    }
+                                }, 5); // Exit the game after 5 seconds
+                            }
+                        });
+                    }
+                }
+                latch.countDown(); // Release the latch to unblock the waiting thread
+            }
+
+            @Override
+            public void failed(Throwable t) {
+                // Handle connection failure
+                latch.countDown(); // Release the latch in case of failure too
+            }
+
+            @Override
+            public void cancelled() {
+                // Handle cancellation
+                latch.countDown(); // Release the latch in case of cancellation too
+            }
+        });
+
+        latch.await(); // Wait until the latch is released
+        httpRequest.reset();
+
+        return response[0];
+    }
+    public String connectToServer(String token, String context) throws InterruptedException {
+        String[] response = {""};
+        CountDownLatch latch = new CountDownLatch(1);
+        int[] attemptCounter = {0};
+
+        HttpRequestBuilder builder = new HttpRequestBuilder();
+        HelperForJsonBody body = new HelperForJsonBody(new JSONObject());
+        String jsonStr = body.FormAuthToken(token).toJSONString();
+        Net.HttpRequest httpRequest = builder.newRequest().method(Net.HttpMethods.POST)
+                .url("https://9ad6-5-228-80-154.ngrok-free.app/"+context)
                 .content(jsonStr)
                 .header("Content-Type", "application/json")
                 .build();

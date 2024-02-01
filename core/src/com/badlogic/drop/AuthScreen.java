@@ -11,12 +11,14 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
@@ -42,6 +44,7 @@ public class AuthScreen implements Screen{
         Gdx.input.setInputProcessor(stage);
         batch = new SpriteBatch();
         img = new Texture("authPicture/black.jpg");
+        /*
 
         lastFrame = new Texture("atlas/authback_atlas42.png");
         textureAtlas = new TextureAtlas(Gdx.files.internal("atlas/authback_atlas.atlas"));
@@ -60,6 +63,8 @@ public class AuthScreen implements Screen{
 
 
 
+
+         */
 
 
 
@@ -82,43 +87,37 @@ public class AuthScreen implements Screen{
         textPassword.setMaxLength(10);
         TextButton buttonCreate = new TextButton("Create", skin);
         final TextButton buttonLog = new TextButton("Log in", skin);
-        buttonLog.addListener(new EventListener() {
+        buttonLog.addListener(new ClickListener() {
             @Override
-            public boolean handle(Event event) {
+            public void clicked(InputEvent event,float x, float y) {
                 Gdx.input.setOnscreenKeyboardVisible(false);
                 game.dispose();
                 String login=textLogin.getText();
                 String password=textPassword.getText();
-                Gdx.app.postRunnable(new Task(login,password,game,new AuthScreen(game)));
+                Gdx.app.postRunnable(new Task(login,password,"api",game,new AuthScreen(game)));
                 //Gdx.app.postRunnable(new Task(login,password,game));
                 Gdx.input.setOnscreenKeyboardVisible(false);
                 //game.setScreen(new Map());
 
-                return true;
             }
         });
-        buttonCreate.addListener(new EventListener() {
+        buttonCreate.addListener(new ClickListener() {
 
             @Override
-            public boolean handle(Event event) {
-
+            public void clicked(InputEvent event, float x, float y) {
+                game.dispose();
                 String login=textLogin.getText();
                 String password=textPassword.getText();
 
-                if(password.length()<2){
-                    //game.dispose();
+                if(password.length()<5){
                    game.setScreen(new ErrorScreen(game,"short password",new AuthScreen(game)));
+                    Gdx.input.setOnscreenKeyboardVisible(false);
                 }else {
-                    //game.dispose();
-                   // game.setScreen(new ErrorScreen(game,s,new AuthScreen(game)));
-                    Gdx.app.postRunnable(new Task(login,password,game,new AuthScreen(game)));
-                   // Gdx.input.setOnscreenKeyboardVisible(false);
-                    //game.setScreen(new Map());
-                    //game.setScreen(new ErrorScreen(game,"short password",new AuthScreen(game)));
+
+                    Gdx.app.postRunnable(new Task(login,password,"create",game,new AuthScreen(game)));
+                    Gdx.input.setOnscreenKeyboardVisible(false);
                 }
-                //game.dispose();
-                dispose();
-                return false;
+
             }
         });
 
@@ -152,6 +151,7 @@ public class AuthScreen implements Screen{
         ScreenUtils.clear(1, 0, 0, 1);
         batch.begin();
         batch.draw(img, 0, 0);
+        /*
 
         stateTime += delta; // Увеличиваем время анимации на время прошедшее с предыдущего кадра
         TextureRegion currentFrame = animation.getKeyFrame(stateTime, false);
@@ -162,6 +162,8 @@ public class AuthScreen implements Screen{
             batch.draw(lastFrame, 50, -875, Gdx.graphics.getWidth(), Gdx.graphics.getHeight() + 800);
             stateTime = 0;
         }
+
+         */
 
 
 
