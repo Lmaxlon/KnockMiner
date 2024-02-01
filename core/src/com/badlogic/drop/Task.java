@@ -66,7 +66,7 @@ public class Task implements Runnable, ApplicationListener {
                 FileHandle file= Gdx.files.local("jwtDir/jwtToken.text");
                 file.writeString((String)j.get("token"),false);
 
-                game.setScreen(new Map());
+                game.setScreen(new Map(j));
             }
         } catch (ParseException e) {
             // Handle parse exception

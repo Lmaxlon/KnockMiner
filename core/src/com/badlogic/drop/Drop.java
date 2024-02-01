@@ -28,14 +28,15 @@ public class Drop extends Game {
 
 	@Override
 	public void create() {
-		Gdx.app.setLogLevel(Application.LOG_DEBUG);
 
+		Gdx.app.setLogLevel(Application.LOG_DEBUG);
 		FileHandle file= Gdx.files.local("jwtDir/jwtToken.text");
 		Gdx.app.postRunnable(new TaskToken(file.readString(),"tokenAuth",this));
 		Gdx.app.debug("rap", file.readString());
 
 
-		//this.setScreen(new AuthScreen(this));
+
+		this.setScreen(new AuthScreen(this));
 	}
 
 

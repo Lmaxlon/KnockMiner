@@ -21,7 +21,7 @@ public class HttpClient {
         HelperForJsonBody body = new HelperForJsonBody(new JSONObject());
         String jsonStr = body.FormAuth(login, password).toJSONString();
         Net.HttpRequest httpRequest = builder.newRequest().method(Net.HttpMethods.POST)
-                .url("https://9ad6-5-228-80-154.ngrok-free.app/"+context)
+                .url("https://3646-213-87-132-14.ngrok-free.app/"+context)
                 .content(jsonStr)
                 .header("Content-Type", "application/json")
                 .build();
@@ -82,10 +82,11 @@ public class HttpClient {
         HelperForJsonBody body = new HelperForJsonBody(new JSONObject());
         String jsonStr = body.FormAuthToken(token).toJSONString();
         Net.HttpRequest httpRequest = builder.newRequest().method(Net.HttpMethods.POST)
-                .url("https://9ad6-5-228-80-154.ngrok-free.app/"+context)
+                .url("https://3646-213-87-132-14.ngrok-free.app/"+context)
                 .content(jsonStr)
                 .header("Content-Type", "application/json")
                 .build();
+        httpRequest.setTimeOut(60);
 
         Gdx.net.sendHttpRequest(httpRequest, new Net.HttpResponseListener() {
             @Override

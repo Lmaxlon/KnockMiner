@@ -91,7 +91,7 @@ public class AuthScreen implements Screen{
             @Override
             public void clicked(InputEvent event,float x, float y) {
                 Gdx.input.setOnscreenKeyboardVisible(false);
-                game.dispose();
+                //game.dispose();
                 String login=textLogin.getText();
                 String password=textPassword.getText();
                 Gdx.app.postRunnable(new Task(login,password,"api",game,new AuthScreen(game)));
@@ -105,7 +105,7 @@ public class AuthScreen implements Screen{
 
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.dispose();
+                //game.dispose();
                 String login=textLogin.getText();
                 String password=textPassword.getText();
 

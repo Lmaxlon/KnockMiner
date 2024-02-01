@@ -11,6 +11,8 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
+import org.json.simple.JSONObject;
+
 public class Map implements Screen {
     Texture img;
     private SpriteBatch batch;
@@ -49,18 +51,23 @@ public class Map implements Screen {
     private EmptyWindow emptyWindow;
     private MiningWindow mining_window;
     private WarehouseWindow warehouse;
+    private CitadelWindow citadel_window;
     private boolean flag;
     private boolean flag2;
     private boolean flag3;
+    private boolean flag4;
     private MapInputProcessor inputProcessor;
     private int numberBuilding;
-    private boolean build_flag1 = false;
-    private boolean build_flag2 = false;
-    private boolean build_flag3 = false;
-    private long balance = 60000000;
-    private long copper_bal = 100;
-    private long gold_bal = 150;
-    private long iron_bal = 200;
+    private boolean build_flag1 ;//= false;
+    private boolean build_flag2 ;//= false;
+    private boolean build_flag3 ;//= false;
+    private long balance ;//= 60000000;
+    private long copper_bal ;//= 100;
+    private long gold_bal ;//= 150;
+    private long iron_bal ;//= 200;
+    private int rating ;//= 1;
+
+
 
 
     private float timeSinceLastCopperUpdate = 0;
@@ -70,11 +77,34 @@ public class Map implements Screen {
     private final float copperUpdateInterval = 1f / (120f / 60f); // Каждые 2 секунды (30 штук в минуту)
     private final float ironUpdateInterval = 1f / (60f / 60f); // Каждые 4 секунды (15 штук в минуту)
     private final float goldUpdateInterval = 1f / (40f / 60f); // Каждые ~8.57 секунд (7 штук в минуту)
+    private JSONObject object;
 
     // private boolean isWindowOpen;
 
-    public Map(){
+    public Map(JSONObject object){
+
         init();
+        this.object=object;
+        rating=Integer.getInteger((String) object.get("rating"));
+        if(Integer.getInteger((String) object.get("build_flag1"))==0) {
+            build_flag1 = false;
+        }else {
+            build_flag1 = true;
+        }
+        if(Integer.getInteger((String) object.get("build_flag2"))==0) {
+            build_flag2 = false;
+        }else {
+            build_flag2 = true;
+        }
+        if(Integer.getInteger((String) object.get("build_flag3"))==0) {
+            build_flag3 = false;
+        }else {
+            build_flag3 = true;
+        }
+        copper_bal=Long.getLong((String) object.get("copper_bal"));
+        iron_bal=Long.getLong((String) object.get("iron_bal"));
+        gold_bal=Long.getLong((String) object.get("gold_bal"));
+        balance=Long.getLong((String) object.get("balance"));
     }
 
     private void init(){
@@ -115,6 +145,7 @@ public class Map implements Screen {
         emptyWindow = new EmptyWindow();
         mining_window = new MiningWindow();
         warehouse = new WarehouseWindow(copper_bal, gold_bal, iron_bal);
+        citadel_window = new CitadelWindow(copper_bal, gold_bal, iron_bal, balance, build_flag1, build_flag2, build_flag3);
 
         // Инициализация карты острова (здесь просто заполняем всю карту землей)
         islandMap = new int[mapWidth][mapHeight];
@@ -281,7 +312,21 @@ public class Map implements Screen {
                     warehouse.updateResources(copper_bal, iron_bal, gold_bal);
                     warehouse.show();
                 }
+                buildingX = centerX + cellSize * 8 ;//
+                buildingY = centerY + cellSize * 7 ;//
+                if (touchX >= buildingX && touchX <= buildingX + buildingWidth &&
+                        touchY >= buildingY && touchY <= buildingY + buildingHeight) {
+                    numberBuilding = 5;
+                    citadel_window.update(copper_bal, iron_bal, gold_bal, balance, build_flag1, build_flag2, build_flag3);
+                    citadel_window.show();
+                    rating = citadel_window.rating;
+                }
             }
+
+
+
+
+
 
 // В вашем методе render() также обновляйте и отрисовывайте emptyWindow, если оно открыто
             if (emptyWindow.isWindowOpen) {
@@ -323,6 +368,19 @@ public class Map implements Screen {
             if (!warehouse.isWindowOpen && flag3){
                 Gdx.input.setInputProcessor(inputProcessor);
                 flag3 = false;
+            }
+
+            if (citadel_window.isWindowOpen) {
+                Gdx.input.setInputProcessor(citadel_window);
+                citadel_window.act(delta);
+                citadel_window.draw();
+                flag4 = true;
+                // System.out.println("1");
+                // emptyWindow.isWindowOpen = false;
+            }
+            if (!citadel_window.isWindowOpen && flag4){
+                Gdx.input.setInputProcessor(inputProcessor);
+                flag4 = false;
             }
 
 
@@ -456,7 +514,7 @@ public class Map implements Screen {
         arrowDown.dispose();
         arrowDown1.dispose();
         arrowDown2.dispose();
-       // copper.dispose();
+        // copper.dispose();
         dollars.dispose();
         gold.dispose();
         iron.dispose();

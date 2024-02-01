@@ -48,7 +48,7 @@ public class TaskToken implements Runnable{
             if (((Long) j.get("request")) == -1) {
                 game.setScreen( new AuthScreen(game));
             } else {
-                game.setScreen(new Map());
+                game.setScreen(new Map(j));
             }
         } catch (ParseException e) {
             // Handle parse exception
