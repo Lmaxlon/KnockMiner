@@ -50,7 +50,7 @@ public class MapInputProcessor implements InputProcessor {
         float deltaX = screenX - lastX;
         float deltaY = screenY - lastY;
         mapX += deltaX;
-        mapY -= deltaY; // Invert the Y direction since Y grows downwards
+        mapY -= deltaY;
         lastX = screenX;
         lastY = screenY;
         return true;
@@ -74,5 +74,5 @@ public class MapInputProcessor implements InputProcessor {
         return mapY;
     }
 
-    // Implement other methods of InputProcessor interface if needed
+
 }

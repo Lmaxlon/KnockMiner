@@ -39,14 +39,12 @@ public class WelcomeScreen implements Screen {
         font.draw(batch, "Welcome to Your Game", Gdx.graphics.getWidth() / 2 - 50, Gdx.graphics.getHeight());
         batch.end();
 
-        // Increment the timer
+
         timer += delta;
 
-        // Check if 5 seconds have passed
+
         if (timer >= 5) {
-            // Switch to the next screen (e.g., Drop screen)
-           //dispose();
-            // Dispose of the WelcomeScreen
+
         }
     }
 

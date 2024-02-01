@@ -22,7 +22,7 @@ public class MiningWindow extends Stage {
     private Image resourceImage;
     private Label resourceNameLabel;
     private Label resourceCountLabel;
-    private long resourceCount = 0; // Initialize with the actual resource count
+    private long resourceCount = 0;
     private TextButton closeButton;
     private TextButton upSpeedButton;
     private Texture resourceDrawable;
@@ -42,14 +42,14 @@ public class MiningWindow extends Stage {
         resourceDrawable = new Texture(Gdx.files.internal("resources/copper.png"));
         resourceImage = new Image(resourceDrawable);
 
-        // Увеличение шрифта надписей можно сделать через skin файл, здесь мы добавим больше отступа
+
         resourceNameLabel = new Label("Copper", skin);
-        resourceNameLabel.setStyle(new Label.LabelStyle(new BitmapFont(), Color.WHITE)); // Пример изменения стиля надписи
+        resourceNameLabel.setStyle(new Label.LabelStyle(new BitmapFont(), Color.WHITE));
         resourceCountLabel = new Label(String.valueOf(resourceCount), skin);
-        resourceCountLabel.setFontScale(3f); // Увеличиваем масштаб шрифта в 1.5 раза
+        resourceCountLabel.setFontScale(3f);
 
         closeButton = new TextButton("Close", skin);
-        closeButton.getLabel().setFontScale(2f); // Увеличиваем шрифт текста на кнопке
+        closeButton.getLabel().setFontScale(2f);
         closeButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -58,23 +58,23 @@ public class MiningWindow extends Stage {
         });
 
         upSpeedButton = new TextButton("Up Speed Mining", skin);
-        upSpeedButton.getLabel().setFontScale(2f); // Аналогично, увеличиваем шрифт
+        upSpeedButton.getLabel().setFontScale(2f);
         upSpeedButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                // Implement the functionality to increase mining speed
+
             }
         });
 
 
-        // Увеличиваем размер кнопок и добавляем отступы
+
         Table contentTable = new Table();
-        contentTable.add(resourceImage).size(128, 128); // Увеличиваем размер изображения
-        contentTable.add(resourceNameLabel).padLeft(20); // Увеличиваем отступ слева
-        contentTable.add(resourceCountLabel).padLeft(20); // Увеличиваем отступ слева
+        contentTable.add(resourceImage).size(128, 128);
+        contentTable.add(resourceNameLabel).padLeft(20);
+        contentTable.add(resourceCountLabel).padLeft(20);
         contentTable.row();
-        contentTable.add(closeButton).size(300, 60).padTop(20); // Увеличиваем размер кнопки и добавляем отступ сверху
-        contentTable.add(upSpeedButton).size(300, 60).padTop(20).padLeft(20); // Увеличиваем размер кнопки и добавляем отступы
+        contentTable.add(closeButton).size(300, 60).padTop(20);
+        contentTable.add(upSpeedButton).size(300, 60).padTop(20).padLeft(20);
         updateResourceImageAndLabel();
         window.add(contentTable).expand().fill();
         addActor(window);
@@ -101,7 +101,6 @@ public class MiningWindow extends Stage {
     }
 
     private void updateResourceImageAndLabel() {
-        // Обновляем название и картинку ресурса в зависимости от типа постройки
         String resourceName = null;
         String resourceImagePath = null;
         switch (buildingType) {
@@ -124,7 +123,7 @@ public class MiningWindow extends Stage {
         }
 
         if (resourceDrawable != null) {
-            resourceDrawable.dispose(); // Освобождаем старый ресурс
+            resourceDrawable.dispose();
         }
         resourceDrawable = new Texture(Gdx.files.internal(resourceImagePath));
         TextureRegionDrawable newDrawable = new TextureRegionDrawable(new TextureRegion(resourceDrawable));

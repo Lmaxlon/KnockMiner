@@ -7,8 +7,6 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.scenes.scene2d.Event;
-import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -47,7 +45,7 @@ public class ErrorScreen implements Screen {
 
         table.setFillParent(true);
         Label labelError=new Label(typeError,skin);
-        font = labelError.getStyle().font; // получение шрифта TextField
+        font = labelError.getStyle().font;
         font.getData().setScale(3);
         TextButton buttonReturn = new TextButton("Return", skin);
         buttonReturn.addListener(new ClickListener() {
@@ -77,7 +75,6 @@ public class ErrorScreen implements Screen {
         ScreenUtils.clear(0, 0, 0, 0);
         batch.begin();
         batch.draw(img, 125, 0, Gdx.graphics.getWidth() - 325, Gdx.graphics.getHeight());
-       // batch.draw(img, 0, 0);
         batch.end();
 
         stage.act(delta);

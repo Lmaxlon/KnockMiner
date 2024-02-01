@@ -9,8 +9,6 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.scenes.scene2d.Event;
-import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -44,7 +42,7 @@ public class AuthScreen implements Screen{
         Gdx.input.setInputProcessor(stage);
         batch = new SpriteBatch();
         img = new Texture("authPicture/black.jpg");
-        /*
+
 
         lastFrame = new Texture("atlas/authback_atlas42.png");
         textureAtlas = new TextureAtlas(Gdx.files.internal("atlas/authback_atlas.atlas"));
@@ -64,7 +62,7 @@ public class AuthScreen implements Screen{
 
 
 
-         */
+
 
 
 
@@ -151,19 +149,18 @@ public class AuthScreen implements Screen{
         ScreenUtils.clear(1, 0, 0, 1);
         batch.begin();
         batch.draw(img, 0, 0);
-        /*
 
-        stateTime += delta; // Увеличиваем время анимации на время прошедшее с предыдущего кадра
+
+        stateTime += delta;
         TextureRegion currentFrame = animation.getKeyFrame(stateTime, false);
         if (currentFrame != null) {
             batch.draw(currentFrame, 50, -875, Gdx.graphics.getWidth(), Gdx.graphics.getHeight() + 800);
         } else {
-            // Анимация завершилась, начнем ее сначала
             batch.draw(lastFrame, 50, -875, Gdx.graphics.getWidth(), Gdx.graphics.getHeight() + 800);
             stateTime = 0;
         }
 
-         */
+
 
 
 
@@ -205,6 +202,5 @@ public class AuthScreen implements Screen{
         img.dispose();
         lastFrame.dispose();
         textureAtlas.dispose();
-        //textureAtlas.dispose();
     }
 }

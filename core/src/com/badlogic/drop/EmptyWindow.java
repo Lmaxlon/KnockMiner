@@ -42,12 +42,11 @@ public class EmptyWindow extends Stage {
         closeButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                buildStation = false; // Reset great_push when the window is closed
-                hide(); // Hide the window when the close button is clicked
+                buildStation = false;
+                hide();
             }
         });
 
-        // Create a label for displaying the cost
         costLabel = new Label("", skin);
         costLabel.setFontScale(2);
 
@@ -57,23 +56,23 @@ public class EmptyWindow extends Stage {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 if (balance >= cost){
-                    buildStation = true; // Set great_push to 1 when the purchase button is clicked
+                    buildStation = true;
                     balance = balance - cost;
-                    hide(); // Hide the window after the purchase button is clicked
+                    hide();
                 } else {
                     Label messageLabel = new Label("You don't have enough money to buy this!", skin);
                     messageLabel.setFontScale(3);
                 }
                 if (purchaseCallback != null) {
-                    purchaseCallback.run(); // Invoke the callback
+                    purchaseCallback.run();
                 }
             }
         });
 
         Table contentTable = new Table();
         contentTable.add(messageLabel).pad(10).row();
-        contentTable.add(costLabel).pad(10).row(); // Add the cost label
-        contentTable.add(purchaseButton).pad(10).row(); // Add the purchase button
+        contentTable.add(costLabel).pad(10).row();
+        contentTable.add(purchaseButton).pad(10).row();
         contentTable.add(closeButton).pad(10);
 
         window.add(contentTable).expand().fill();

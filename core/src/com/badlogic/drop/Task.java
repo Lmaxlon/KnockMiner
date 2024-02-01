@@ -9,11 +9,6 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.Scanner;
-
 public class Task implements Runnable, ApplicationListener {
 
     ErrorScreen error;
@@ -35,7 +30,6 @@ public class Task implements Runnable, ApplicationListener {
 
     @Override
     public void run() {
-        //new HttpClient().connectToServer(login, password);
         String response = null;
         try {
             response = new HttpClient().connectToServer(login, password,context);
@@ -51,7 +45,6 @@ public class Task implements Runnable, ApplicationListener {
         Gdx.app.debug("tag", "Task" + " " + response + " 111");
 
         if (response.trim().isEmpty()) {
-            // Handle empty response
             Gdx.app.debug("tag", "Empty response received");
             return;
         }
@@ -69,7 +62,6 @@ public class Task implements Runnable, ApplicationListener {
                 game.setScreen(new Map(j));
             }
         } catch (ParseException e) {
-            // Handle parse exception
             Gdx.app.error("tag", "Error parsing JSON response", e);
         }
     }

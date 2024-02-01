@@ -58,14 +58,14 @@ public class Map implements Screen {
     private boolean flag4;
     private MapInputProcessor inputProcessor;
     private int numberBuilding;
-    private boolean build_flag1 ;//= false;
-    private boolean build_flag2 ;//= false;
-    private boolean build_flag3 ;//= false;
-    private long balance ;//= 60000000;
-    private long copper_bal ;//= 100;
-    private long gold_bal ;//= 150;
-    private long iron_bal ;//= 200;
-    private int rating ;//= 1;
+    private boolean build_flag1;
+    private boolean build_flag2;
+    private boolean build_flag3;
+    private long balance ;
+    private long copper_bal;
+    private long gold_bal ;
+    private long iron_bal ;
+    private int rating ;
 
 
 
@@ -74,37 +74,31 @@ public class Map implements Screen {
     private float timeSinceLastIronUpdate = 0;
     private float timeSinceLastGoldUpdate = 0;
 
-    private final float copperUpdateInterval = 1f / (120f / 60f); // Каждые 2 секунды (30 штук в минуту)
-    private final float ironUpdateInterval = 1f / (60f / 60f); // Каждые 4 секунды (15 штук в минуту)
-    private final float goldUpdateInterval = 1f / (40f / 60f); // Каждые ~8.57 секунд (7 штук в минуту)
-    private JSONObject object;
+    private final float copperUpdateInterval = 1f / (120f / 60f);
+    private final float ironUpdateInterval = 1f / (60f / 60f);
+    private final float goldUpdateInterval = 1f / (40f / 60f);
+    JSONObject object;
 
-    // private boolean isWindowOpen;
+
 
     public Map(JSONObject object){
 
-        init();
-        this.object=object;
-        rating=Integer.getInteger((String) object.get("rating"));
-        if(Integer.getInteger((String) object.get("build_flag1"))==0) {
-            build_flag1 = false;
-        }else {
-            build_flag1 = true;
-        }
-        if(Integer.getInteger((String) object.get("build_flag2"))==0) {
-            build_flag2 = false;
-        }else {
-            build_flag2 = true;
-        }
-        if(Integer.getInteger((String) object.get("build_flag3"))==0) {
-            build_flag3 = false;
-        }else {
-            build_flag3 = true;
-        }
-        copper_bal=Long.getLong((String) object.get("copper_bal"));
-        iron_bal=Long.getLong((String) object.get("iron_bal"));
-        gold_bal=Long.getLong((String) object.get("gold_bal"));
-        balance=Long.getLong((String) object.get("balance"));
+
+        this.object = object;
+        rating = Integer.parseInt(object.get("rating").toString());
+        build_flag1 = Integer.parseInt(object.get("building_flag1").toString())!=0;
+        build_flag2 = Integer.parseInt(object.get("building_flag2").toString()) != 0;
+        build_flag3 = Integer.parseInt(object.get("building_flag3").toString()) != 0;
+        copper_bal = Long.parseLong(object.get("copper").toString());
+        iron_bal = Long.parseLong(object.get("iron").toString());
+        gold_bal = Long.parseLong(object.get("gold").toString());
+        balance = Long.parseLong(object.get("money").toString());
+
+
+
+
+
+
     }
 
     private void init(){
@@ -114,13 +108,12 @@ public class Map implements Screen {
         batch = new SpriteBatch();
         // Создание камеры с параметрами экрана
         camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        camera.position.set(Gdx.graphics.getWidth() / 2f, Gdx.graphics.getHeight() / 2f, 0); // Установка начальной позиции камеры в центр экрана
+        camera.position.set(Gdx.graphics.getWidth() / 2f, Gdx.graphics.getHeight() / 2f, 0);
         camera.update(); // Обновление камеры
-        //	back = new Texture(Gdx.files.internal("back.png"));
-        cellTexture = new Texture(Gdx.files.internal("cell.png")); // Загрузка текстуры клетки
-        cellTexture.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest); // Установка параметра фильтрации
+        cellTexture = new Texture(Gdx.files.internal("cell.png"));
+        cellTexture.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
         rocksTexture = new Texture(Gdx.files.internal("rocks.png"));
-        rocksTexture.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest); // Установка параметра фильтрации
+        rocksTexture.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
         welcomeBack = new Texture(Gdx.files.internal("welcome_back.png"));
         citadel = new Texture(Gdx.files.internal("base.png"));
         not_opened_miner = new Texture(Gdx.files.internal("not_opened_miner.png"));
@@ -147,22 +140,19 @@ public class Map implements Screen {
         warehouse = new WarehouseWindow(copper_bal, gold_bal, iron_bal);
         citadel_window = new CitadelWindow(copper_bal, gold_bal, iron_bal, balance, build_flag1, build_flag2, build_flag3);
 
-        // Инициализация карты острова (здесь просто заполняем всю карту землей)
         islandMap = new int[mapWidth][mapHeight];
         for (int x = 0; x < mapWidth; x++) {
             for (int y = 0; y < mapHeight; y++) {
-                islandMap[x][y] = (Math.random() < 0.030) ? 0 : 1; // Предполагаем, что 1 - это тип "rocks", 0 - это тип "grass"
+                islandMap[x][y] = (Math.random() < 0.030) ? 0 : 1;
             }
         }
-        // Проход по карте для группировки клеток типа "rocks"
         for (int x = 0; x < mapWidth; x++) {
             for (int y = 0; y < mapHeight; y++) {
                 if (islandMap[x][y] == 1) {
-                    // Проверка соседних клеток
                     boolean hasNeighbourRock = false;
                     for (int dx = -1; dx <= 1; dx++) {
                         for (int dy = -1; dy <= 1; dy++) {
-                            if (dx != 0 || dy != 0) { // Пропускаем текущую клетку
+                            if (dx != 0 || dy != 0) {
                                 int nx = x + dx;
                                 int ny = y + dy;
                                 if (nx >= 0 && nx < mapWidth && ny >= 0 && ny < mapHeight && islandMap[nx][ny] == 1) {
@@ -175,14 +165,12 @@ public class Map implements Screen {
                             break;
                         }
                     }
-                    // Если у клетки типа "rocks" есть соседи типа "rocks", она остается типом "rocks", иначе становится типом "grass"
                     if (!hasNeighbourRock) {
                         islandMap[x][y] = 0;
                     }
                 }
             }
         }
-        // Добавляем обработчик ввода для обработки свайпов
         camera.position.set(mapWidth * cellSize / 2, mapHeight * cellSize / 2, 0);
         camera.update();
     }
@@ -206,11 +194,10 @@ public class Map implements Screen {
             batch.end();
         } else {
             showWelcomeMessage = false;
-            batch.setProjectionMatrix(camera.combined); // Установка матрицы проекции камеры для SpriteBatch
+            batch.setProjectionMatrix(camera.combined);
             batch.begin();
             mapX = inputProcessor.getMapX();
             mapY = inputProcessor.getMapY();
-            // Отрисовка острова из клеток
             for (int x = 0; x < mapWidth; x++) {
                 for (int y = 0; y < mapHeight; y++) {
                     float offsetX = (y % 2 == 0) ? 0 : cellSize / 2; // Смещение для каждой второй строки
@@ -234,18 +221,18 @@ public class Map implements Screen {
             batch.begin();
             arrowOffsetY += arrowSpeed * delta;
             if (arrowOffsetY > 10 || arrowOffsetY < -10) {
-                arrowSpeed *= -1; // Изменение направления движения при достижении пределов смещения
+                arrowSpeed *= -1;
             }
             if (Gdx.input.justTouched() && !emptyWindow.isWindowOpen) {
                 Vector3 touch = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
-                camera.unproject(touch); // Преобразование экранных координат в мировые
+                camera.unproject(touch);
                 float touchX = touch.x;
                 float touchY = touch.y;
-                //ЭТО КООРДИНАТЫ НИЖНЕЙ ДОБЫВАЛКИ
-                float buildingX = centerX - cellSize * 3 ; // Позиция X здания на экране
-                float buildingY = centerY + cellSize * 1 ; // Позиция Y здания на экране
-                float buildingWidth = citadel.getWidth(); // Ширина текстуры здания
-                float buildingHeight = citadel.getHeight(); // Высота текстуры здания
+
+                float buildingX = centerX - cellSize * 3 ;
+                float buildingY = centerY + cellSize * 1 ;
+                float buildingWidth = citadel.getWidth();
+                float buildingHeight = citadel.getHeight();
                 if (touchX >= buildingX && touchX <= buildingX + buildingWidth &&
                         touchY >= buildingY && touchY <= buildingY + buildingHeight) {
                     numberBuilding = 1;
@@ -328,7 +315,7 @@ public class Map implements Screen {
 
 
 
-// В вашем методе render() также обновляйте и отрисовывайте emptyWindow, если оно открыто
+
             if (emptyWindow.isWindowOpen) {
                 Gdx.input.setInputProcessor(emptyWindow);
                 emptyWindow.act(delta);
@@ -388,7 +375,7 @@ public class Map implements Screen {
             if (build_flag1) {
                 timeSinceLastCopperUpdate += delta;
                 if (timeSinceLastCopperUpdate >= copperUpdateInterval) {
-                    copper_bal += 1; // Увеличиваем на 1 каждые 2 секунды
+                    copper_bal += 1;
                     timeSinceLastCopperUpdate -= copperUpdateInterval;
                 }
             }
@@ -397,7 +384,7 @@ public class Map implements Screen {
             if (build_flag2) {
                 timeSinceLastIronUpdate += delta;
                 if (timeSinceLastIronUpdate >= ironUpdateInterval) {
-                    iron_bal += 1; // Увеличиваем на 1 каждые 4 секунды
+                    iron_bal += 1;
                     timeSinceLastIronUpdate -= ironUpdateInterval;
                 }
             }
@@ -406,7 +393,7 @@ public class Map implements Screen {
             if (build_flag3) {
                 timeSinceLastGoldUpdate += delta;
                 if (timeSinceLastGoldUpdate >= goldUpdateInterval) {
-                    gold_bal += 1; // Увеличиваем на 1 каждые ~8.57 секунды
+                    gold_bal += 1;
                     timeSinceLastGoldUpdate -= goldUpdateInterval;
                 }
             }

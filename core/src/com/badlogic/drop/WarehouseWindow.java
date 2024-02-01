@@ -56,7 +56,7 @@ public class WarehouseWindow extends Stage {
         closeButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                hide(); // Скрываем окно при нажатии
+                hide();
             }
         });
 
@@ -65,8 +65,8 @@ public class WarehouseWindow extends Stage {
         contentTable.add(copperLabel).padTop(20).row();
         contentTable.add(ironLabel).padTop(20).row();
         contentTable.add(goldLabel).padTop(20).row();
-        contentTable.row(); // Добавляем строку в таблицу для кнопки закрытия
-        contentTable.add(closeButton).padTop(50).colspan(2).center(); // Размещаем кнопку закрытия под метками ресурсов
+        contentTable.row();
+        contentTable.add(closeButton).padTop(50).colspan(2).center();
 
         window.add(contentTable).expand().fill();
         addActor(window);

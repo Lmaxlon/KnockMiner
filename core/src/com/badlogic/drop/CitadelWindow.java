@@ -37,9 +37,9 @@ public class CitadelWindow extends Stage {
         this.build_flag1 = build_flag1;
         this.build_flag2 = build_flag2;
         this.build_flag3 = build_flag3;
-        this.rating = calculateRating(); // Инициализируем рейтинг
+        this.rating = calculateRating();
 
-        skin = new Skin(Gdx.files.internal("authPicture/uiskin.json")); // Убедитесь, что путь к skin корректен
+        skin = new Skin(Gdx.files.internal("authPicture/uiskin.json"));
         initialize();
     }
 
@@ -50,10 +50,10 @@ public class CitadelWindow extends Stage {
         if (build_flag2) initialRating += 2;
         if (build_flag3) initialRating += 3;
         // Добавляем рейтинг за ресурсы
-        initialRating += copper_bal / 1000 * 2; // За каждые 1000 меди
-        initialRating += iron_bal / 500 * 3; // За каждые 500 железа
-        initialRating += gold_bal / 100 * 5; // За каждые 100 золота
-        initialRating += money / 1000000 * 10; // За каждый миллион денег
+        initialRating += copper_bal / 1000 * 2;
+        initialRating += iron_bal / 500 * 3;
+        initialRating += gold_bal / 100 * 5;
+        initialRating += money / 1000000 * 10;
         return initialRating;
     }
 
@@ -62,7 +62,7 @@ public class CitadelWindow extends Stage {
         window.setSize(1500, 1000);
         window.setPosition(600, 125);
 
-        rating = calculateRating(); // Пересчитываем рейтинг
+        rating = calculateRating();
         ratingLabel = new Label("Rating: " + rating, skin);
         ratingLabel.setStyle(new Label.LabelStyle(new BitmapFont(), Color.WHITE));
         ratingLabel.setFontScale(3f);
@@ -79,21 +79,21 @@ public class CitadelWindow extends Stage {
         ratingExplanationLabel = new Label(ratingExplanationText, skin);
         ratingExplanationLabel.setStyle(new Label.LabelStyle(new BitmapFont(), Color.WHITE));
         ratingExplanationLabel.setFontScale(2f);
-        ratingExplanationLabel.setWrap(true); // Включаем перенос слов для длинного текста
+        ratingExplanationLabel.setWrap(true);
 
         closeButton = new TextButton("Close", skin);
         closeButton.getLabel().setFontScale(2f);
         closeButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                hide(); // Скрываем окно при нажатии
+                hide();
             }
         });
 
         Table contentTable = new Table();
         contentTable.add(ratingLabel).padBottom(20).row();
-        contentTable.add(ratingExplanationLabel).padBottom(20).width(1400).row(); // Устанавливаем ширину, чтобы текст не выходил за пределы окна
-        contentTable.add(closeButton).padTop(50).colspan(2).center(); // Размещаем кнопку закрытия
+        contentTable.add(ratingExplanationLabel).padBottom(20).width(1400).row();
+        contentTable.add(closeButton).padTop(50).colspan(2).center();
 
         window.add(contentTable).expand().fill();
         addActor(window);
@@ -108,8 +108,8 @@ public class CitadelWindow extends Stage {
         this.build_flag2 = build_flag2;
         this.build_flag3 = build_flag3;
 
-        rating = calculateRating(); // Обновляем рейтинг
-        ratingLabel.setText("Rating: " + rating); // Обновляем текст рейтинга
+        rating = calculateRating();
+        ratingLabel.setText("Rating: " + rating);
     }
 
     public void show() {

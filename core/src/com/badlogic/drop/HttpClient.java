@@ -47,28 +47,26 @@ public class HttpClient {
                                     public void run() {
                                         Gdx.app.exit();
                                     }
-                                }, 5); // Exit the game after 5 seconds
+                                }, 5);
                             }
                         });
                     }
                 }
-                latch.countDown(); // Release the latch to unblock the waiting thread
+                latch.countDown();
             }
 
             @Override
             public void failed(Throwable t) {
-                // Handle connection failure
-                latch.countDown(); // Release the latch in case of failure too
+                latch.countDown();
             }
 
             @Override
             public void cancelled() {
-                // Handle cancellation
-                latch.countDown(); // Release the latch in case of cancellation too
+                latch.countDown();
             }
         });
 
-        latch.await(); // Wait until the latch is released
+        latch.await();
         httpRequest.reset();
 
         return response[0];
@@ -86,7 +84,6 @@ public class HttpClient {
                 .content(jsonStr)
                 .header("Content-Type", "application/json")
                 .build();
-        httpRequest.setTimeOut(60);
 
         Gdx.net.sendHttpRequest(httpRequest, new Net.HttpResponseListener() {
             @Override
@@ -114,91 +111,23 @@ public class HttpClient {
                         });
                     }
                 }
-                latch.countDown(); // Release the latch to unblock the waiting thread
+                latch.countDown();
             }
 
             @Override
             public void failed(Throwable t) {
-                // Handle connection failure
-                latch.countDown(); // Release the latch in case of failure too
+                latch.countDown();
             }
 
             @Override
             public void cancelled() {
-                // Handle cancellation
-                latch.countDown(); // Release the latch in case of cancellation too
+                latch.countDown();
             }
         });
 
-        latch.await(); // Wait until the latch is released
+        latch.await();
         httpRequest.reset();
 
         return response[0];
     }
 }
-
-
-
-
-
-
-
-/*
-package com.badlogic.drop;
-
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Net;
-import com.badlogic.gdx.net.HttpRequestBuilder;
-import com.badlogic.gdx.net.HttpStatus;
-
-import org.json.simple.JSONObject;
-
-public class HttpClient {
-
-
-    public static String connectToServer(String login, String password) {
-        final String[] response = {""};
-
-        HttpRequestBuilder builder = new HttpRequestBuilder();
-        HelperForJsonBody body = new HelperForJsonBody(new JSONObject());
-        String jsonStr = body.FormAuth(login, password).toJSONString();
-        Net.HttpRequest httpRequest = builder.newRequest().method(Net.HttpMethods.POST)
-                .url("https://ba7c-5-228-80-154.ngrok-free.app/api")
-                .content(jsonStr)
-                .header("Content-Type", "application/json")
-                .build();
-        Net.HttpResponseListener listener = new Net.HttpResponseListener() {
-
-
-            @Override
-            public void handleHttpResponse(Net.HttpResponse httpResponse) {
-                if(httpResponse.getStatus().getStatusCode()==HttpStatus.SC_OK) {
-                    response[0] = httpResponse.getResultAsString();
-                    Gdx.app.debug("tag", response[0] + "585");
-                }
-                //AuthScreen.content.setString(response);
-                // AuthScreen.content.notify();
-                // Gdx.app.debug("хуй", ",kz,");
-//                AuthScreen.content.setString(httpResponse.getResultAsString());
-                //Gdx.app.debug("хуй", "response server123" + AuthScreen.content.getString() + "93");
-            }
-
-            @Override
-            public void failed(Throwable t) {
-
-            }
-
-            @Override
-            public void cancelled() {
-
-            }
-        };
-        Gdx.net.sendHttpRequest(httpRequest, listener);
-        return response[0];
-    }
-
-}
-
-
-
-*/
